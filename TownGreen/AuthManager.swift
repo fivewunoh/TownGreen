@@ -11,6 +11,8 @@ import Supabase
 
 final class AuthManager: ObservableObject {
     @Published var isLoggedIn: Bool = false
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String?
 
     private var authTask: Task<Void, Never>?
 
@@ -33,41 +35,46 @@ final class AuthManager: ObservableObject {
     }
 
     func signIn(email: String, password: String) async {
+        await MainActor.run { isLoading = true; errorMessage = nil }
+        defer { Task { @MainActor in isLoading = false } }
         do {
             _ = try await SupabaseClient.shared.auth.signIn(
                 email: email,
                 password: password
             )
-            await MainActor.run {
-                self.isLoggedIn = true
-            }
+            await MainActor.run { self.isLoggedIn = true }
         } catch {
-            // Caller can handle error
+            await MainActor.run { self.errorMessage = error.localizedDescription }
         }
     }
 
-    func signUp(email: String, password: String) async {
+    func signUp(email: String, password: String) async -> Bool {
+        await MainActor.run { isLoading = true; errorMessage = nil }
+        defer { Task { @MainActor in isLoading = false } }
         do {
             _ = try await SupabaseClient.shared.auth.signUp(
                 email: email,
                 password: password
             )
-            await MainActor.run {
-                self.isLoggedIn = true
-            }
+            await MainActor.run { self.isLoggedIn = true }
+            return true
         } catch {
-            // Caller can handle error
+            await MainActor.run { self.errorMessage = error.localizedDescription }
+            return false
         }
     }
 
     func signOut() async {
+        await MainActor.run { errorMessage = nil }
         do {
             try await SupabaseClient.shared.auth.signOut()
-            await MainActor.run {
-                self.isLoggedIn = false
-            }
+            await MainActor.run { self.isLoggedIn = false }
         } catch {
-            // Caller can handle error
+            await MainActor.run { self.errorMessage = error.localizedDescription }
         }
+    }
+
+    func clearError() {
+        errorMessage = nil
     }
 }

@@ -8,6 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject private var authManager: AuthManager
+
+    var body: some View {
+        Group {
+            if authManager.isLoggedIn {
+                MainTabView()
+            } else {
+                WelcomeView()
+            }
+        }
+    }
+}
+
+struct MainTabView: View {
     var body: some View {
         TabView {
             PlaceholderTab(title: "For Sale")
@@ -50,4 +64,5 @@ struct PlaceholderTab: View {
 
 #Preview {
     ContentView()
+        .environmentObject(AuthManager())
 }
