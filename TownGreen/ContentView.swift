@@ -9,13 +9,42 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            PlaceholderTab(title: "For Sale")
+                .tabItem {
+                    Label("For Sale", systemImage: "tag.fill")
+                }
+            PlaceholderTab(title: "Events")
+                .tabItem {
+                    Label("Events", systemImage: "calendar")
+                }
+            PlaceholderTab(title: "Services")
+                .tabItem {
+                    Label("Services", systemImage: "wrench.and.screwdriver.fill")
+                }
+            PlaceholderTab(title: "News")
+                .tabItem {
+                    Label("News", systemImage: "newspaper.fill")
+                }
         }
-        .padding()
+    }
+}
+
+struct PlaceholderTab: View {
+    let title: String
+
+    var body: some View {
+        NavigationStack {
+            VStack {
+                Spacer()
+                Text(title)
+                    .font(.title)
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.large)
+        }
     }
 }
 
