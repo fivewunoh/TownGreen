@@ -33,7 +33,7 @@ struct MainTabView: View {
                 .tabItem {
                     Label("For Sale", systemImage: "tag.fill")
                 }
-            PlaceholderTab(title: "Events")
+            EventsView()
                 .tabItem {
                     Label("Events", systemImage: "calendar")
                 }

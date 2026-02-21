@@ -1,5 +1,5 @@
 //
-//  EditListingView.swift
+//  EditEventView.swift
 //  TownGreen
 //
 //  Created by Chris Solis on 2/21/26.
@@ -8,37 +8,42 @@
 import SwiftUI
 import Supabase
 
-struct EditListingView: View {
-    let listing: Listing
-    var onSave: (Listing) -> Void
+struct EditEventView: View {
+    let event: Event
+    var onSave: (Event) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
 
     @State private var title: String
     @State private var description: String
-    @State private var priceText: String
-    @State private var category: String
+    @State private var eventDate: Date
     @State private var location: String
+    @State private var address: String
+    @State private var eventTypeOption: EventTypeOption
+    @State private var isFree: Bool
     @State private var selectedImage: UIImage?
     @State private var keepExistingImage: Bool
     @State private var showImagePicker = false
     @State private var isSaving = false
     @State private var errorMessage: String?
 
-    private var priceValue: Double? {
-        Double(priceText.trimmingCharacters(in: .whitespacesAndNewlines))
+    init(event: Event, onSave: @escaping (Event) -> Void) {
+        self.event = event
+        self.onSave = onSave
+        _title = State(initialValue: event.title ?? "")
+        _description = State(initialValue: event.description ?? "")
+        _location = State(initialValue: event.location ?? "")
+        _address = State(initialValue: event.address ?? "")
+        _eventTypeOption = State(initialValue: EventTypeOption(rawValue: event.eventType ?? "Community") ?? .community)
+        _isFree = State(initialValue: event.isFree ?? true)
+        _keepExistingImage = State(initialValue: event.imageUrl != nil)
+        let parsed = Self.parseEventDate(event.eventDate)
+        _eventDate = State(initialValue: parsed ?? Date())
     }
 
-    init(listing: Listing, onSave: @escaping (Listing) -> Void) {
-        self.listing = listing
-        self.onSave = onSave
-        _title = State(initialValue: listing.title ?? "")
-        _description = State(initialValue: listing.description ?? "")
-        _priceText = State(initialValue: listing.price.map { String(format: "%.2f", $0) } ?? "")
-        _category = State(initialValue: listing.category ?? "")
-        _location = State(initialValue: listing.location ?? "")
-        _keepExistingImage = State(initialValue: listing.imageUrl != nil)
+    private static func parseEventDate(_ raw: String?) -> Date? {
+        TownGreenDateFormatter.parseISO8601(raw)
     }
 
     var body: some View {
@@ -62,7 +67,7 @@ struct EditListingView: View {
                         }
                         .padding(8)
                     }
-                } else if keepExistingImage, let urlString = listing.imageUrl, let url = URL(string: urlString) {
+                } else if keepExistingImage, let urlString = event.imageUrl, let url = URL(string: urlString) {
                     ZStack(alignment: .topTrailing) {
                         AsyncImage(url: url) { phase in
                             switch phase {
@@ -109,7 +114,7 @@ struct EditListingView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                if (selectedImage != nil || (keepExistingImage && listing.imageUrl != nil)) && selectedImage == nil {
+                if (selectedImage != nil || (keepExistingImage && event.imageUrl != nil)) && selectedImage == nil {
                     Button("Change photo") {
                         showImagePicker = true
                     }
@@ -139,24 +144,9 @@ struct EditListingView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.lightGreen, lineWidth: 1)
                     )
-                TextField("Price", text: $priceText)
-                    .keyboardType(.decimalPad)
-                    .padding(12)
-                    .background(Color.townGreenCard(for: colorScheme))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.lightGreen, lineWidth: 1)
-                    )
-                TextField("Category", text: $category)
-                    .textContentType(.none)
-                    .padding(12)
-                    .background(Color.townGreenCard(for: colorScheme))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.lightGreen, lineWidth: 1)
-                    )
+                DatePicker("Date & time", selection: $eventDate)
+                    .datePickerStyle(.compact)
+                    .tint(Color.primaryGreen)
                 TextField("Location", text: $location)
                     .textContentType(.addressCityAndState)
                     .padding(12)
@@ -166,8 +156,26 @@ struct EditListingView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.lightGreen, lineWidth: 1)
                     )
+                TextField("Address (optional)", text: $address)
+                    .textContentType(.fullStreetAddress)
+                    .padding(12)
+                    .background(Color.townGreenCard(for: colorScheme))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.lightGreen, lineWidth: 1)
+                    )
+                Picker("Event type", selection: $eventTypeOption) {
+                    ForEach(EventTypeOption.allCases, id: \.self) { option in
+                        Text(option.rawValue).tag(option)
+                    }
+                }
+                .pickerStyle(.menu)
+                .tint(Color.primaryGreen)
+                Toggle("Free event", isOn: $isFree)
+                    .tint(Color.primaryGreen)
             } header: {
-                Text("Listing details")
+                Text("Event details")
                     .font(Font.TownGreenFonts.sectionHeader)
                     .foregroundStyle(Color.primaryGreen)
             }
@@ -183,7 +191,7 @@ struct EditListingView: View {
             Section {
                 Button {
                     Task {
-                        await saveListing()
+                        await saveEvent()
                     }
                 } label: {
                     HStack {
@@ -203,16 +211,16 @@ struct EditListingView: View {
                     .background(Color.primaryGreen)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .disabled(title.isEmpty || priceValue == nil || category.isEmpty || location.isEmpty || isSaving)
+                .disabled(title.isEmpty || location.isEmpty || isSaving)
             }
         }
         .scrollContentBackground(.hidden)
         .background(Color.townGreenBackground(for: colorScheme))
-        .navigationTitle("Edit Listing")
+        .navigationTitle("Edit Event")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("Edit Listing")
+                Text("Edit Event")
                     .font(Font.TownGreenFonts.title)
                     .foregroundStyle(Color.primaryGreen)
             }
@@ -229,9 +237,8 @@ struct EditListingView: View {
         }
     }
 
-    private func saveListing() async {
-        guard let price = priceValue else { return }
-        guard let userId = try? await SupabaseClient.shared.auth.session.user.id else {
+    private func saveEvent() async {
+        guard let _ = try? await SupabaseClient.shared.auth.session.user.id else {
             await MainActor.run {
                 errorMessage = "You must be signed in to save."
             }
@@ -242,17 +249,22 @@ struct EditListingView: View {
         errorMessage = nil
         defer { isSaving = false }
 
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime]
+        let eventDateString = isoFormatter.string(from: eventDate)
+
         var imageUrl: String?
         if let image = selectedImage,
-           let jpegData = image.jpegData(compressionQuality: 0.8) {
+           let jpegData = image.jpegData(compressionQuality: 0.8),
+           let userId = try? await SupabaseClient.shared.auth.session.user.id {
             let fileId = UUID().uuidString
             let path = "\(userId.uuidString)/\(fileId).jpg"
             do {
                 try await SupabaseClient.shared.storage
-                    .from("listing-images")
+                    .from("event-images")
                     .upload(path, data: jpegData, options: FileOptions(contentType: "image/jpeg", upsert: false))
                 let url = try SupabaseClient.shared.storage
-                    .from("listing-images")
+                    .from("event-images")
                     .getPublicURL(path: path)
                 imageUrl = url.absoluteString
             } catch {
@@ -262,37 +274,39 @@ struct EditListingView: View {
                 return
             }
         } else if keepExistingImage {
-            imageUrl = listing.imageUrl
+            imageUrl = event.imageUrl
         }
 
-        let request = UpdateListingRequest(
+        let request = UpdateEventRequest(
             title: title.trimmingCharacters(in: .whitespacesAndNewlines),
             description: description.trimmingCharacters(in: .whitespacesAndNewlines),
-            price: price,
-            category: category.trimmingCharacters(in: .whitespacesAndNewlines),
+            eventDate: eventDateString,
             location: location.trimmingCharacters(in: .whitespacesAndNewlines),
+            address: address.isEmpty ? nil : address.trimmingCharacters(in: .whitespacesAndNewlines),
+            eventType: eventTypeOption.rawValue,
             imageUrl: imageUrl,
-            isSold: listing.isSold
+            isFree: isFree
         )
 
         do {
             try await SupabaseClient.shared
-                .from("listings")
+                .from("events")
                 .update(request)
-                .eq("id", value: listing.id)
+                .eq("id", value: event.id)
                 .execute()
 
-            let updated = Listing(
-                id: listing.id,
+            let updated = Event(
+                id: event.id,
+                createdAt: event.createdAt,
                 title: request.title,
                 description: request.description,
-                price: request.price,
-                category: request.category,
+                eventDate: request.eventDate,
                 location: request.location,
-                userId: listing.userId,
+                address: request.address,
+                userId: event.userId,
+                eventType: request.eventType,
                 imageUrl: imageUrl,
-                isSold: listing.isSold,
-                createdAt: listing.createdAt
+                isFree: request.isFree
             )
             await MainActor.run {
                 onSave(updated)
@@ -307,17 +321,18 @@ struct EditListingView: View {
 
 #Preview {
     NavigationStack {
-        EditListingView(listing: Listing(
+        EditEventView(event: Event(
             id: 1,
-            title: "Vintage Bike",
-            description: "Great condition.",
-            price: 150,
-            category: "Sports",
-            location: "Downtown",
-            userId: UUID(),
+            createdAt: nil,
+            title: "Community Cleanup",
+            description: "Join us.",
+            eventDate: "2026-03-15T14:00:00Z",
+            location: "Main Park",
+            address: nil,
+            userId: nil,
+            eventType: "Community",
             imageUrl: nil,
-            isSold: nil,
-            createdAt: nil
+            isFree: true
         )) { _ in }
     }
 }

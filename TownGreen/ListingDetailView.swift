@@ -144,6 +144,9 @@ struct ListingDetailView: View {
             if let location = listing.location, !location.isEmpty {
                 DetailRow(label: "Location", value: location)
             }
+            if let createdAt = listing.createdAt {
+                DetailRow(label: "Posted", value: TownGreenDateFormatter.formatCreatedAt(from: createdAt))
+            }
 
             if let description = listing.description, !description.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
@@ -291,22 +294,6 @@ struct ListingDetailView: View {
         formatter.numberStyle = .currency
         formatter.locale = Locale.current
         return formatter.string(from: NSNumber(value: value)) ?? "$\(value)"
-    }
-}
-
-private struct DetailRow: View {
-    let label: String
-    let value: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(label)
-                .font(Font.TownGreenFonts.caption)
-                .foregroundStyle(Color.primaryGreen)
-            Text(value)
-                .font(Font.TownGreenFonts.body)
-                .foregroundStyle(Color.darkGreen)
-        }
     }
 }
 

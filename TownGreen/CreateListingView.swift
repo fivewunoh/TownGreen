@@ -202,11 +202,7 @@ struct CreateListingView: View {
             do {
                 try await SupabaseClient.shared.storage
                     .from("listing-images")
-                    .upload(
-                        path: path,
-                        file: jpegData,
-                        options: FileOptions(contentType: "image/jpeg", upsert: false)
-                    )
+                    .upload(path, data: jpegData, options: FileOptions(contentType: "image/jpeg", upsert: false))
                 let url = try SupabaseClient.shared.storage
                     .from("listing-images")
                     .getPublicURL(path: path)
