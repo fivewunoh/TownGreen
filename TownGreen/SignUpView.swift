@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SignUpView: View {
     @EnvironmentObject private var authManager: AuthManager
+    @Environment(\.colorScheme) private var colorScheme
 
     @State private var email = ""
     @State private var password = ""
@@ -19,7 +20,8 @@ struct SignUpView: View {
             if didSignUp {
                 Section {
                     Text("Please check your email to verify your account.")
-                        .foregroundStyle(.secondary)
+                        .font(Font.TownGreenFonts.body)
+                        .foregroundStyle(Color.darkGreen)
                 }
             } else {
                 Section {
@@ -27,17 +29,33 @@ struct SignUpView: View {
                         .textContentType(.emailAddress)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
+                        .padding(12)
+                        .background(Color.townGreenCard(for: colorScheme))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.lightGreen, lineWidth: 1)
+                        )
                     SecureField("Password", text: $password)
                         .textContentType(.newPassword)
+                        .padding(12)
+                        .background(Color.townGreenCard(for: colorScheme))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.lightGreen, lineWidth: 1)
+                        )
                 } header: {
                     Text("Create account")
+                        .font(Font.TownGreenFonts.sectionHeader)
+                        .foregroundStyle(Color.primaryGreen)
                 }
 
                 if let error = authManager.errorMessage {
                     Section {
                         Text(error)
+                            .font(Font.TownGreenFonts.body)
                             .foregroundStyle(.red)
-                            .font(.caption)
                     }
                 }
 
@@ -57,22 +75,35 @@ struct SignUpView: View {
                             Spacer()
                             if authManager.isLoading {
                                 ProgressView()
-                                    .tint(.primary)
+                                    .tint(.white)
                             } else {
                                 Text("Create Account")
-                                    .fontWeight(.semibold)
+                                    .font(Font.TownGreenFonts.button)
+                                    .foregroundStyle(.white)
                             }
                             Spacer()
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 12)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.primaryGreen)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     .disabled(email.isEmpty || password.isEmpty || authManager.isLoading)
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.townGreenBackground(for: colorScheme))
         .navigationTitle("Sign Up")
-        .onAppear { authManager.clearError() }
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Sign Up")
+                    .font(Font.TownGreenFonts.title)
+                    .foregroundStyle(Color.primaryGreen)
+            }
+        }
+        .onAppear { authManager.clearError() }
     }
 }
 

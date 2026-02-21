@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var authManager: AuthManager
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         Group {
@@ -18,13 +19,17 @@ struct ContentView: View {
                 WelcomeView()
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.townGreenBackground(for: colorScheme))
     }
 }
 
 struct MainTabView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
         TabView {
-            PlaceholderTab(title: "For Sale")
+            ForSaleView()
                 .tabItem {
                     Label("For Sale", systemImage: "tag.fill")
                 }
@@ -41,10 +46,13 @@ struct MainTabView: View {
                     Label("News", systemImage: "newspaper.fill")
                 }
         }
+        .tint(Color.primaryGreen)
+        .background(Color.townGreenBackground(for: colorScheme))
     }
 }
 
 struct PlaceholderTab: View {
+    @Environment(\.colorScheme) private var colorScheme
     let title: String
 
     var body: some View {
@@ -52,12 +60,21 @@ struct PlaceholderTab: View {
             VStack {
                 Spacer()
                 Text(title)
-                    .font(.title)
-                    .foregroundStyle(.secondary)
+                    .font(Font.TownGreenFonts.title)
+                    .foregroundStyle(Color.darkGreen)
                 Spacer()
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.townGreenBackground(for: colorScheme))
             .navigationTitle(title)
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(title)
+                        .font(Font.TownGreenFonts.title)
+                        .foregroundStyle(Color.primaryGreen)
+                }
+            }
         }
     }
 }
