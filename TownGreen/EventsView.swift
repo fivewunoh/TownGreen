@@ -10,11 +10,13 @@ import Supabase
 
 struct EventsView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject private var authManager: AuthManager
 
     @State private var events: [Event] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var showCreateEvent = false
+    @State private var showSettings = false
 
     /// Sorted by event_date (soonest first). No extra filter here — past-event filtering is done in fetchEvents() when filterPastEvents is true.
     private var sortedEvents: [Event] {
@@ -62,13 +64,25 @@ struct EventsView: View {
                         .foregroundStyle(Color.primaryGreen)
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showCreateEvent = true
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .foregroundStyle(Color.primaryGreen)
+                    HStack(spacing: 12) {
+                        Button {
+                            showSettings = true
+                        } label: {
+                            Image(systemName: "gearshape.fill")
+                                .foregroundStyle(Color.primaryGreen)
+                        }
+                        Button {
+                            showCreateEvent = true
+                        } label: {
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundStyle(Color.primaryGreen)
+                        }
                     }
                 }
+            }
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
+                    .environmentObject(authManager)
             }
             .task {
                 print("[EventsView] .task started — calling fetchEvents()")

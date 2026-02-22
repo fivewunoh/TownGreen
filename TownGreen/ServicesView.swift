@@ -15,11 +15,13 @@ enum ServiceFilterMode: String, CaseIterable {
 
 struct ServicesView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject private var authManager: AuthManager
 
     @State private var services: [Service] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var showCreateService = false
+    @State private var showSettings = false
     @State private var filterMode: ServiceFilterMode = .offered
 
     private var filteredServices: [Service] {
@@ -78,13 +80,25 @@ struct ServicesView: View {
                         .foregroundStyle(Color.primaryGreen)
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showCreateService = true
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .foregroundStyle(Color.primaryGreen)
+                    HStack(spacing: 12) {
+                        Button {
+                            showSettings = true
+                        } label: {
+                            Image(systemName: "gearshape.fill")
+                                .foregroundStyle(Color.primaryGreen)
+                        }
+                        Button {
+                            showCreateService = true
+                        } label: {
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundStyle(Color.primaryGreen)
+                        }
                     }
                 }
+            }
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
+                    .environmentObject(authManager)
             }
             .task {
                 await fetchServices()

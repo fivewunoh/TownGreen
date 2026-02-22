@@ -10,6 +10,15 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject private var authManager: AuthManager
     @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("colorScheme") private var storedColorScheme: String = ColorSchemeOption.system.rawValue
+
+    private var preferredScheme: ColorScheme? {
+        switch storedColorScheme {
+        case ColorSchemeOption.light.rawValue: return .light
+        case ColorSchemeOption.dark.rawValue: return .dark
+        default: return nil
+        }
+    }
 
     var body: some View {
         Group {
@@ -21,6 +30,7 @@ struct ContentView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.townGreenBackground(for: colorScheme))
+        .preferredColorScheme(preferredScheme)
     }
 }
 

@@ -10,11 +10,13 @@ import Supabase
 
 struct ForSaleView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject private var authManager: AuthManager
 
     @State private var listings: [Listing] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var showCreateListing = false
+    @State private var showSettings = false
 
     var body: some View {
         NavigationStack {
@@ -57,13 +59,25 @@ struct ForSaleView: View {
                         .foregroundStyle(Color.primaryGreen)
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showCreateListing = true
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .foregroundStyle(Color.primaryGreen)
+                    HStack(spacing: 12) {
+                        Button {
+                            showSettings = true
+                        } label: {
+                            Image(systemName: "gearshape.fill")
+                                .foregroundStyle(Color.primaryGreen)
+                        }
+                        Button {
+                            showCreateListing = true
+                        } label: {
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundStyle(Color.primaryGreen)
+                        }
                     }
                 }
+            }
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
+                    .environmentObject(authManager)
             }
             .task {
                 await fetchListings()

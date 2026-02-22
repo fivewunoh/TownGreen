@@ -15,12 +15,14 @@ private enum FeedConfig {
 
 struct NewsView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject private var authManager: AuthManager
 
     @State private var items: [NewsItem] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var safariURL: URL?
     @State private var showSafari = false
+    @State private var showSettings = false
 
     var body: some View {
         NavigationStack {
@@ -72,6 +74,18 @@ struct NewsView: View {
                         .font(Font.TownGreenFonts.title)
                         .foregroundStyle(Color.primaryGreen)
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                            .foregroundStyle(Color.primaryGreen)
+                    }
+                }
+            }
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
+                    .environmentObject(authManager)
             }
             .task {
                 await fetchAllFeeds()
