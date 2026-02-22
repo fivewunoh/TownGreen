@@ -41,7 +41,7 @@ struct MainTabView: View {
                 .tabItem {
                     Label("Services", systemImage: "wrench.and.screwdriver.fill")
                 }
-            PlaceholderTab(title: "News")
+            NewsView()
                 .tabItem {
                     Label("News", systemImage: "newspaper.fill")
                 }
