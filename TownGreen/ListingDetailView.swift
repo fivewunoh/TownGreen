@@ -123,7 +123,7 @@ struct ListingDetailView: View {
             .foregroundStyle(.white)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
-            .background(Color.primaryGreen)
+            .background(Color.darkGreen)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .padding(12)
     }
@@ -132,11 +132,11 @@ struct ListingDetailView: View {
         VStack(alignment: .leading, spacing: 20) {
             Text(listing.title ?? "Untitled")
                 .font(Font.TownGreenFonts.title)
-                .foregroundStyle(Color.darkGreen)
+                .foregroundStyle(Color.textPrimary(for: colorScheme))
 
             Text(formatPrice(listing.price ?? 0))
                 .font(Font.TownGreenFonts.price)
-                .foregroundStyle(Color.primaryGreen)
+                .foregroundStyle(Color.textPrimary(for: colorScheme))
 
             if let category = listing.category, !category.isEmpty {
                 DetailRow(label: "Category", value: category)
@@ -152,10 +152,10 @@ struct ListingDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Description")
                         .font(Font.TownGreenFonts.sectionHeader)
-                        .foregroundStyle(Color.primaryGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                     Text(description)
                         .font(Font.TownGreenFonts.body)
-                        .foregroundStyle(Color.darkGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                 }
             }
         }

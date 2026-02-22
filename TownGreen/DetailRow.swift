@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DetailRow: View {
+    @Environment(\.colorScheme) private var colorScheme
     let label: String
     let value: String
 
@@ -15,10 +16,10 @@ struct DetailRow: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label)
                 .font(Font.TownGreenFonts.caption)
-                .foregroundStyle(Color.primaryGreen)
+                .foregroundStyle(Color.textPrimary(for: colorScheme))
             Text(value)
                 .font(Font.TownGreenFonts.body)
-                .foregroundStyle(Color.darkGreen)
+                .foregroundStyle(Color.textPrimary(for: colorScheme))
         }
     }
 }

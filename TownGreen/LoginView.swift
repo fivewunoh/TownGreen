@@ -40,7 +40,7 @@ struct LoginView: View {
             } header: {
                 Text("Log in")
                     .font(Font.TownGreenFonts.sectionHeader)
-                    .foregroundStyle(Color.primaryGreen)
+                    .foregroundStyle(Color.textPrimary(for: colorScheme))
             }
 
             if let error = authManager.errorMessage {

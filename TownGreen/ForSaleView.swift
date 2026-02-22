@@ -53,25 +53,25 @@ struct ForSaleView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarColorScheme(colorScheme, for: .navigationBar)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                            .foregroundStyle(Color.primaryGreen)
+                    }
+                }
                 ToolbarItem(placement: .principal) {
                     Text("For Sale")
                         .font(Font.TownGreenFonts.title)
                         .foregroundStyle(Color.primaryGreen)
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    HStack(spacing: 12) {
-                        Button {
-                            showSettings = true
-                        } label: {
-                            Image(systemName: "gearshape.fill")
-                                .foregroundStyle(Color.primaryGreen)
-                        }
-                        Button {
-                            showCreateListing = true
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                                .foregroundStyle(Color.primaryGreen)
-                        }
+                    Button {
+                        showCreateListing = true
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .foregroundStyle(Color.primaryGreen)
                     }
                 }
             }
@@ -86,7 +86,7 @@ struct ForSaleView: View {
                 Task { await fetchListings() }
             }
             .refreshable {
-                await fetchListings()
+                await Task { await fetchListings() }.value
             }
             .sheet(isPresented: $showCreateListing) {
                 NavigationStack {
@@ -142,7 +142,7 @@ struct ListingCard: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.darkGreen.opacity(0.9))
+                            .background(Color.darkGreen)
                             .clipShape(Capsule())
                     }
                     Spacer(minLength: 0)
@@ -150,22 +150,22 @@ struct ListingCard: View {
                 HStack {
                     Text(formatPrice(listing.price ?? 0))
                         .font(Font.TownGreenFonts.price)
-                        .foregroundStyle(Color.primaryGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                     Spacer()
                     if let category = listing.category, !category.isEmpty {
                         Text(category)
                             .font(Font.TownGreenFonts.caption)
-                            .foregroundStyle(Color.darkGreen)
+                            .foregroundStyle(.white)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.lightGreen)
+                            .background(Color.darkGreen)
                             .clipShape(Capsule())
                     }
                 }
                 if let location = listing.location, !location.isEmpty {
                     Text(location)
                         .font(Font.TownGreenFonts.caption)
-                        .foregroundStyle(Color.darkGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

@@ -58,25 +58,25 @@ struct EventsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarColorScheme(colorScheme, for: .navigationBar)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                            .foregroundStyle(Color.primaryGreen)
+                    }
+                }
                 ToolbarItem(placement: .principal) {
                     Text("Events")
                         .font(Font.TownGreenFonts.title)
                         .foregroundStyle(Color.primaryGreen)
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    HStack(spacing: 12) {
-                        Button {
-                            showSettings = true
-                        } label: {
-                            Image(systemName: "gearshape.fill")
-                                .foregroundStyle(Color.primaryGreen)
-                        }
-                        Button {
-                            showCreateEvent = true
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                                .foregroundStyle(Color.primaryGreen)
-                        }
+                    Button {
+                        showCreateEvent = true
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .foregroundStyle(Color.primaryGreen)
                     }
                 }
             }
@@ -93,7 +93,7 @@ struct EventsView: View {
                 Task { await fetchEvents() }
             }
             .refreshable {
-                await fetchEvents()
+                await Task { await fetchEvents() }.value
             }
             .sheet(isPresented: $showCreateEvent) {
                 NavigationStack {
@@ -199,31 +199,35 @@ struct EventCard: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.orange)
+                            .background(Color.darkGreen)
                             .clipShape(Capsule())
                     }
                 }
                 Text(TownGreenDateFormatter.formatEventDateTimeFromUTC(iso8601: event.eventDate))
                     .font(Font.TownGreenFonts.caption)
-                    .foregroundStyle(Color.darkGreen)
+                    .foregroundStyle(Color.textPrimary(for: colorScheme))
                 if let location = event.location, !location.isEmpty {
                     Text(location)
                         .font(Font.TownGreenFonts.caption)
-                        .foregroundStyle(Color.darkGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                 }
                 HStack(spacing: 8) {
                     if let type = event.eventType, !type.isEmpty {
                         Text(type)
                             .font(Font.TownGreenFonts.caption)
-                            .foregroundStyle(Color.darkGreen)
+                            .foregroundStyle(.white)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.lightGreen)
+                            .background(Color.darkGreen)
                             .clipShape(Capsule())
                     }
                     Text((event.isFree ?? true) ? "Free" : "Paid")
                         .font(Font.TownGreenFonts.caption)
-                        .foregroundStyle((event.isFree ?? true) ? Color.primaryGreen : Color.darkGreen)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.darkGreen)
+                        .clipShape(Capsule())
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

@@ -18,10 +18,10 @@ struct WelcomeView: View {
                 VStack(spacing: 12) {
                     Text("TownGreen")
                         .font(Font.TownGreenFonts.title)
-                        .foregroundStyle(Color.primaryGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                     Text("Your Local Community")
                         .font(Font.TownGreenFonts.body)
-                        .foregroundStyle(Color.primaryGreen.opacity(0.7))
+                        .foregroundStyle(Color.textPrimary(for: colorScheme).opacity(0.9))
                 }
 
                 Spacer()
@@ -51,7 +51,7 @@ struct WelcomeView: View {
                                 RoundedRectangle(cornerRadius: 12)
                                     .stroke(Color.primaryGreen, lineWidth: 2)
                             )
-                            .foregroundStyle(Color.primaryGreen)
+                            .foregroundStyle(Color.textPrimary(for: colorScheme))
                     }
                     .buttonStyle(.plain)
                 }

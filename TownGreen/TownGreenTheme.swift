@@ -24,6 +24,13 @@ extension Color {
     static let cardLight = Color.white
     /// Dark gray (dark mode cards)
     static let cardDark = Color(hex: "2C2C2C")
+    /// Light mint/sage green for text in dark mode
+    static let textPrimaryDark = Color(hex: "95D5B2")
+
+    /// Primary text color: dark green in light mode, light mint in dark mode for readability
+    static func textPrimary(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? textPrimaryDark : darkGreen
+    }
 
     /// Background color that adapts to color scheme
     static func townGreenBackground(for colorScheme: ColorScheme) -> Color {

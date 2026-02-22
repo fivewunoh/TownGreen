@@ -74,25 +74,25 @@ struct ServicesView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarColorScheme(colorScheme, for: .navigationBar)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                            .foregroundStyle(Color.primaryGreen)
+                    }
+                }
                 ToolbarItem(placement: .principal) {
                     Text("Services")
                         .font(Font.TownGreenFonts.title)
                         .foregroundStyle(Color.primaryGreen)
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    HStack(spacing: 12) {
-                        Button {
-                            showSettings = true
-                        } label: {
-                            Image(systemName: "gearshape.fill")
-                                .foregroundStyle(Color.primaryGreen)
-                        }
-                        Button {
-                            showCreateService = true
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                                .foregroundStyle(Color.primaryGreen)
-                        }
+                    Button {
+                        showCreateService = true
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .foregroundStyle(Color.primaryGreen)
                     }
                 }
             }
@@ -107,7 +107,7 @@ struct ServicesView: View {
                 Task { await fetchServices() }
             }
             .refreshable {
-                await fetchServices()
+                await Task { await fetchServices() }.value
             }
             .sheet(isPresented: $showCreateService) {
                 NavigationStack {
@@ -158,22 +158,22 @@ struct ServiceCard: View {
                     if let category = service.category, !category.isEmpty {
                         Text(category)
                             .font(Font.TownGreenFonts.caption)
-                            .foregroundStyle(Color.darkGreen)
+                            .foregroundStyle(.white)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.lightGreen)
+                            .background(Color.darkGreen)
                             .clipShape(Capsule())
                     }
                     if let price = service.priceRange, !price.isEmpty {
                         Text(price)
                             .font(Font.TownGreenFonts.caption)
-                            .foregroundStyle(Color.primaryGreen)
+                            .foregroundStyle(Color.textPrimary(for: colorScheme))
                     }
                 }
                 if let location = service.location, !location.isEmpty {
                     Text(location)
                         .font(Font.TownGreenFonts.caption)
-                        .foregroundStyle(Color.darkGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

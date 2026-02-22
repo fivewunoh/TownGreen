@@ -71,7 +71,7 @@ struct PlaceholderTab: View {
                 Spacer()
                 Text(title)
                     .font(Font.TownGreenFonts.title)
-                    .foregroundStyle(Color.darkGreen)
+                    .foregroundStyle(Color.textPrimary(for: colorScheme))
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

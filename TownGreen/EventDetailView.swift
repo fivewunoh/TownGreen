@@ -111,11 +111,11 @@ struct EventDetailView: View {
         VStack(alignment: .leading, spacing: 20) {
             Text(event.title ?? "Untitled")
                 .font(Font.TownGreenFonts.title)
-                .foregroundStyle(Color.darkGreen)
+                .foregroundStyle(Color.textPrimary(for: colorScheme))
 
             Text(TownGreenDateFormatter.formatEventDateTimeFromUTC(iso8601: event.eventDate))
                 .font(Font.TownGreenFonts.body)
-                .foregroundStyle(Color.primaryGreen)
+                .foregroundStyle(Color.textPrimary(for: colorScheme))
 
             if let createdAt = event.createdAt, !createdAt.isEmpty {
                 DetailRow(label: "Posted", value: TownGreenDateFormatter.formatCreatedAt(iso8601: createdAt))
@@ -132,25 +132,29 @@ struct EventDetailView: View {
                 if let type = event.eventType, !type.isEmpty {
                     Text(type)
                         .font(Font.TownGreenFonts.caption)
-                        .foregroundStyle(Color.darkGreen)
+                        .foregroundStyle(.white)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.lightGreen)
+                        .background(Color.darkGreen)
                         .clipShape(Capsule())
                 }
                 Text((event.isFree ?? true) ? "Free" : "Paid")
                     .font(Font.TownGreenFonts.caption)
-                    .foregroundStyle((event.isFree ?? true) ? Color.primaryGreen : Color.darkGreen)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.darkGreen)
+                    .clipShape(Capsule())
             }
 
             if let description = event.description, !description.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Description")
                         .font(Font.TownGreenFonts.sectionHeader)
-                        .foregroundStyle(Color.primaryGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                     Text(description)
                         .font(Font.TownGreenFonts.body)
-                        .foregroundStyle(Color.darkGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                 }
             }
         }

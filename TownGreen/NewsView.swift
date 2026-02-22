@@ -69,18 +69,18 @@ struct NewsView: View {
             .navigationTitle("Local News")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("Local News")
-                        .font(Font.TownGreenFonts.title)
-                        .foregroundStyle(Color.primaryGreen)
-                }
-                ToolbarItem(placement: .primaryAction) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button {
                         showSettings = true
                     } label: {
                         Image(systemName: "gearshape.fill")
                             .foregroundStyle(Color.primaryGreen)
                     }
+                }
+                ToolbarItem(placement: .principal) {
+                    Text("Local News")
+                        .font(Font.TownGreenFonts.title)
+                        .foregroundStyle(Color.primaryGreen)
                 }
             }
             .sheet(isPresented: $showSettings) {
@@ -91,7 +91,7 @@ struct NewsView: View {
                 await fetchAllFeeds()
             }
             .refreshable {
-                await fetchAllFeeds()
+                await Task { await fetchAllFeeds() }.value
             }
             .sheet(isPresented: $showSafari, onDismiss: { safariURL = nil }) {
                 if let url = safariURL {
@@ -142,14 +142,6 @@ struct NewsCard: View {
     let item: NewsItem
     let colorScheme: ColorScheme
 
-    private var sourceBadgeColor: Color {
-        switch item.source {
-        case .valleyNews: return Color.primaryGreen
-        case .patch: return Color(hex: "6B4E71")
-        case .pressEnterprise: return Color.darkGreen
-        }
-    }
-
     private var formattedDate: String {
         guard let date = item.pubDate else { return "" }
         let f = DateFormatter()
@@ -163,7 +155,7 @@ struct NewsCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(item.title)
                     .font(Font.TownGreenFonts.title)
-                    .foregroundStyle(Color.primaryGreen)
+                    .foregroundStyle(Color.textPrimary(for: colorScheme))
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                 Text(item.source.rawValue)
@@ -172,18 +164,18 @@ struct NewsCard: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(sourceBadgeColor)
+                    .background(Color.darkGreen)
                     .clipShape(Capsule())
                 if !formattedDate.isEmpty {
                     Text(formattedDate)
                         .font(Font.TownGreenFonts.caption)
-                        .foregroundStyle(Color.darkGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                 }
                 if !item.description.isEmpty {
                     Text(item.description)
                         .font(Font.TownGreenFonts.body)
                         .fontWeight(.light)
-                        .foregroundStyle(Color.darkGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                         .lineLimit(2)
                 }
             }

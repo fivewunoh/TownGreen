@@ -100,7 +100,7 @@ struct EditListingView: View {
                                 .foregroundStyle(Color.primaryGreen)
                             Text("Add photo")
                                 .font(Font.TownGreenFonts.caption)
-                                .foregroundStyle(Color.primaryGreen)
+                                .foregroundStyle(Color.textPrimary(for: colorScheme))
                         }
                         .frame(maxWidth: .infinity)
                         .frame(height: 120)
@@ -169,7 +169,7 @@ struct EditListingView: View {
             } header: {
                 Text("Listing details")
                     .font(Font.TownGreenFonts.sectionHeader)
-                    .foregroundStyle(Color.primaryGreen)
+                    .foregroundStyle(Color.textPrimary(for: colorScheme))
             }
 
             if let error = errorMessage {

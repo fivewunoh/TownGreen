@@ -39,11 +39,11 @@ struct SettingsView: View {
                         HStack {
                             Text("Email")
                                 .font(Font.TownGreenFonts.sectionHeader)
-                                .foregroundStyle(Color.primaryGreen)
+                                .foregroundStyle(Color.textPrimary(for: colorScheme))
                             Spacer()
                             Text(email)
                                 .font(Font.TownGreenFonts.body)
-                                .foregroundStyle(Color.darkGreen)
+                                .foregroundStyle(Color.textPrimary(for: colorScheme))
                         }
                     }
                     Button(role: .destructive) {
@@ -59,7 +59,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Account")
                         .font(Font.TownGreenFonts.sectionHeader)
-                        .foregroundStyle(Color.primaryGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                 }
 
                 Section {
@@ -72,28 +72,28 @@ struct SettingsView: View {
                 } header: {
                     Text("Appearance")
                         .font(Font.TownGreenFonts.sectionHeader)
-                        .foregroundStyle(Color.primaryGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                 }
 
                 Section {
                     HStack {
                         Text("Version")
                             .font(Font.TownGreenFonts.sectionHeader)
-                            .foregroundStyle(Color.primaryGreen)
+                            .foregroundStyle(Color.textPrimary(for: colorScheme))
                         Spacer()
                         Text("1.0.0")
                             .font(Font.TownGreenFonts.body)
-                            .foregroundStyle(Color.darkGreen)
+                            .foregroundStyle(Color.textPrimary(for: colorScheme))
                     }
                     HStack {
                         Text("TownGreen — French Valley & Winchester Community")
                             .font(Font.TownGreenFonts.body)
-                            .foregroundStyle(Color.darkGreen)
+                            .foregroundStyle(Color.textPrimary(for: colorScheme))
                     }
                 } header: {
                     Text("About")
                         .font(Font.TownGreenFonts.sectionHeader)
-                        .foregroundStyle(Color.primaryGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                 }
             }
             .scrollContentBackground(.hidden)

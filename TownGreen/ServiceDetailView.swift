@@ -111,7 +111,7 @@ struct ServiceDetailView: View {
         VStack(alignment: .leading, spacing: 20) {
             Text(service.title ?? "Untitled")
                 .font(Font.TownGreenFonts.title)
-                .foregroundStyle(Color.darkGreen)
+                .foregroundStyle(Color.textPrimary(for: colorScheme))
 
             Text((service.isOffered ?? true) ? "Offered" : "Wanted")
                 .font(Font.TownGreenFonts.caption)
@@ -119,7 +119,7 @@ struct ServiceDetailView: View {
                 .foregroundStyle(.white)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
-                .background((service.isOffered ?? true) ? Color.primaryGreen : Color.darkGreen)
+                .background(Color.darkGreen)
                 .clipShape(Capsule())
 
             if let category = service.category, !category.isEmpty {
@@ -139,10 +139,10 @@ struct ServiceDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Description")
                         .font(Font.TownGreenFonts.sectionHeader)
-                        .foregroundStyle(Color.primaryGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                     Text(description)
                         .font(Font.TownGreenFonts.body)
-                        .foregroundStyle(Color.darkGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                 }
             }
         }

@@ -49,7 +49,7 @@ struct EditServiceView: View {
             } header: {
                 Text("Service type")
                     .font(Font.TownGreenFonts.sectionHeader)
-                    .foregroundStyle(Color.primaryGreen)
+                    .foregroundStyle(Color.textPrimary(for: colorScheme))
             }
 
             Section {
@@ -109,7 +109,7 @@ struct EditServiceView: View {
                                 .foregroundStyle(Color.primaryGreen)
                             Text("Add photo")
                                 .font(Font.TownGreenFonts.caption)
-                                .foregroundStyle(Color.primaryGreen)
+                                .foregroundStyle(Color.textPrimary(for: colorScheme))
                         }
                         .frame(maxWidth: .infinity)
                         .frame(height: 120)
@@ -187,7 +187,7 @@ struct EditServiceView: View {
             } header: {
                 Text("Service details")
                     .font(Font.TownGreenFonts.sectionHeader)
-                    .foregroundStyle(Color.primaryGreen)
+                    .foregroundStyle(Color.textPrimary(for: colorScheme))
             }
 
             if let error = errorMessage {

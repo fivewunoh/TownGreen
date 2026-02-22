@@ -21,7 +21,7 @@ struct SignUpView: View {
                 Section {
                     Text("Please check your email to verify your account.")
                         .font(Font.TownGreenFonts.body)
-                        .foregroundStyle(Color.darkGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                 }
             } else {
                 Section {
@@ -48,7 +48,7 @@ struct SignUpView: View {
                 } header: {
                     Text("Create account")
                         .font(Font.TownGreenFonts.sectionHeader)
-                        .foregroundStyle(Color.primaryGreen)
+                        .foregroundStyle(Color.textPrimary(for: colorScheme))
                 }
 
                 if let error = authManager.errorMessage {
