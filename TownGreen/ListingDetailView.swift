@@ -11,9 +11,11 @@ import Supabase
 struct ListingDetailView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var profileManager: ProfileManager
 
     @State private var listing: Listing
     @State private var currentUserId: UUID?
+    @State private var posterProfile: Profile?
     @State private var showDeleteConfirmation = false
     @State private var showEditSheet = false
     @State private var isUpdatingSold = false
@@ -53,6 +55,9 @@ struct ListingDetailView: View {
         }
         .task {
             await loadCurrentUser()
+            if let uid = listing.userId?.uuidString {
+                posterProfile = await profileManager.fetchProfile(userId: uid)
+            }
         }
         .alert("Delete listing?", isPresented: $showDeleteConfirmation) {
             Button("Cancel", role: .cancel) {}
@@ -130,6 +135,23 @@ struct ListingDetailView: View {
 
     private var contentSection: some View {
         VStack(alignment: .leading, spacing: 20) {
+            if let uid = listing.userId?.uuidString {
+                NavigationLink {
+                    ProfileView(userId: uid)
+                        .environmentObject(profileManager)
+                } label: {
+                    HStack(spacing: 6) {
+                        Text("Posted by")
+                            .font(Font.TownGreenFonts.caption)
+                            .foregroundStyle(Color.textPrimary(for: colorScheme).opacity(0.8))
+                        Text(posterProfile?.displayName ?? "Member")
+                            .font(Font.TownGreenFonts.body)
+                            .fontWeight(.medium)
+                            .foregroundStyle(Color.primaryGreen)
+                    }
+                }
+                .buttonStyle(.plain)
+            }
             Text(listing.title ?? "Untitled")
                 .font(Font.TownGreenFonts.title)
                 .foregroundStyle(Color.textPrimary(for: colorScheme))
@@ -311,5 +333,6 @@ struct ListingDetailView: View {
             isSold: nil,
             createdAt: nil
         ))
+        .environmentObject(ProfileManager())
     }
 }

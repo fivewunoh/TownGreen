@@ -11,9 +11,11 @@ import Supabase
 struct ServiceDetailView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var profileManager: ProfileManager
 
     @State private var service: Service
     @State private var currentUserId: String?
+    @State private var posterProfile: Profile?
     @State private var showDeleteConfirmation = false
     @State private var showEditSheet = false
 
@@ -48,6 +50,9 @@ struct ServiceDetailView: View {
         }
         .task {
             await loadCurrentUser()
+            if let uid = service.userId {
+                posterProfile = await profileManager.fetchProfile(userId: uid)
+            }
         }
         .alert("Delete service?", isPresented: $showDeleteConfirmation) {
             Button("Cancel", role: .cancel) {}
@@ -109,6 +114,23 @@ struct ServiceDetailView: View {
 
     private var contentSection: some View {
         VStack(alignment: .leading, spacing: 20) {
+            if let uid = service.userId {
+                NavigationLink {
+                    ProfileView(userId: uid)
+                        .environmentObject(profileManager)
+                } label: {
+                    HStack(spacing: 6) {
+                        Text("Posted by")
+                            .font(Font.TownGreenFonts.caption)
+                            .foregroundStyle(Color.textPrimary(for: colorScheme).opacity(0.8))
+                        Text(posterProfile?.displayName ?? "Member")
+                            .font(Font.TownGreenFonts.body)
+                            .fontWeight(.medium)
+                            .foregroundStyle(Color.primaryGreen)
+                    }
+                }
+                .buttonStyle(.plain)
+            }
             Text(service.title ?? "Untitled")
                 .font(Font.TownGreenFonts.title)
                 .foregroundStyle(Color.textPrimary(for: colorScheme))
@@ -229,5 +251,6 @@ struct ServiceDetailView: View {
             priceRange: "$25/hr",
             imageUrl: nil
         ))
+        .environmentObject(ProfileManager())
     }
 }

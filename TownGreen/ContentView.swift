@@ -36,6 +36,7 @@ struct ContentView: View {
 
 struct MainTabView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject private var profileManager: ProfileManager
 
     var body: some View {
         TabView {
@@ -58,6 +59,9 @@ struct MainTabView: View {
         }
         .tint(Color.primaryGreen)
         .background(Color.townGreenBackground(for: colorScheme))
+        .task {
+            await profileManager.createProfileIfNeeded()
+        }
     }
 }
 
@@ -92,4 +96,5 @@ struct PlaceholderTab: View {
 #Preview {
     ContentView()
         .environmentObject(AuthManager())
+        .environmentObject(ProfileManager())
 }

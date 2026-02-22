@@ -17,16 +17,28 @@ enum ColorSchemeOption: String, CaseIterable {
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var authManager: AuthManager
+    @EnvironmentObject private var profileManager: ProfileManager
     @Environment(\.colorScheme) private var colorScheme
 
     @AppStorage("colorScheme") private var storedColorScheme: String = ColorSchemeOption.system.rawValue
     @State private var userEmail: String?
     @State private var isLoadingEmail = true
+    @State private var currentUserId: String?
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
+                    if let uid = currentUserId {
+                        NavigationLink {
+                            ProfileView(userId: uid)
+                                .environmentObject(profileManager)
+                        } label: {
+                            Text("Profile")
+                                .font(Font.TownGreenFonts.sectionHeader)
+                                .foregroundStyle(Color.textPrimary(for: colorScheme))
+                        }
+                    }
                     if isLoadingEmail {
                         HStack {
                             Text("Loading…")
@@ -116,6 +128,7 @@ struct SettingsView: View {
             }
             .task {
                 await loadUserEmail()
+                currentUserId = await profileManager.currentUserId()
             }
         }
     }
@@ -138,4 +151,5 @@ struct SettingsView: View {
 #Preview {
     SettingsView()
         .environmentObject(AuthManager())
+        .environmentObject(ProfileManager())
 }

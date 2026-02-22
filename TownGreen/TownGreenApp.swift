@@ -10,11 +10,13 @@ import SwiftUI
 @main
 struct TownGreenApp: App {
     @StateObject private var authManager = AuthManager()
+    @StateObject private var profileManager = ProfileManager()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(authManager)
+                .environmentObject(profileManager)
         }
     }
 }
